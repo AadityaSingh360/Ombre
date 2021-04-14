@@ -7,7 +7,9 @@ import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:ombre_test/DataController.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -43,25 +45,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    Firebase.initializeApp().whenComplete(() {
-      print("completed");
-      setState(() {});
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 60.0,
-
           title: Column(
             children: <Widget>[
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -71,16 +62,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       decoration: BoxDecoration(
                           color: HexColor("#283444"),
                           border: Border.all(),
-                          borderRadius: BorderRadius.all(Radius.circular(30.0))),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(30.0))),
                       width: 300.0,
                       height: 55.0,
-
                       child: TextField(
                         onChanged: (val) {
                           setState(() {
                             name = val.toLowerCase().trim();
                           });
-
                         },
                         cursorColor: Colors.blue,
                         style: TextStyle(
@@ -129,14 +119,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   .snapshots()
               : FirebaseFirestore.instance.collection("events").snapshots(),
           builder: (context, snapshot) {
-
             return (snapshot.connectionState == ConnectionState.waiting)
                 ? Center(child: CircularProgressIndicator())
                 : ListView.builder(
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (context, index) {
                       DocumentSnapshot data = snapshot.data.docs[index];
-                      debugPrint('data reteieved '+data['title']);
+                      debugPrint('data reteieved ' + data['title']);
                       return Card(
                         color: Color(0xFF0D111A),
                         child: Row(
@@ -145,33 +134,44 @@ class _MyHomePageState extends State<MyHomePage> {
                               padding: const EdgeInsets.all(10.0),
                               child: Image.network(
                                 'https://smaller-pictures.appspot.com/images/dreamstime_xxl_65780868_small.jpg',
-                                width: 150,
-                                height: 100,
+                                width: 110,
+                                height: 70,
                                 fit: BoxFit.fill,
                               ),
                             ),
                             SizedBox(
-                              width: 25,
+                              width: 15,
                             ),
-                            Column(
-                              children: <Widget>[
-                                Text(
-                                  data['genre'],
-                                  style: TextStyle(
-                                    color: Color(0xFFF65C7C),
-                                    fontSize: 18,
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      data['genre'],
+                                      style: TextStyle(
+                                        color: Color(0xFFF65C7C),
+                                        fontSize: 13,
+                                      ),
+                                      textAlign: TextAlign.start,
+                                    ),
                                   ),
-                                  textAlign: TextAlign.left,
-                                ),
-                                Text(
-                                  data['title'],
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 20,
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      data['title'],
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 16,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             )
                           ],
                         ),
@@ -183,7 +183,6 @@ class _MyHomePageState extends State<MyHomePage> {
         bottomNavigationBar: CurvedNavigationBar(
           backgroundColor: HexColor("0d111a"),
           buttonBackgroundColor: Color(0xFFF65C7C),
-
           height: 60.0,
           color: HexColor("#283444"),
           items: <Widget>[
